@@ -36,6 +36,27 @@ class DataStoreGatewayRepository(context: Context, private val legacyDataStoreMa
 		val WG_GATEWAYS = stringPreferencesKey("WG_GATEWAYS")
 
 		private val LEGACY_KEYS = listOf(ENTRY_GATEWAYS, EXIT_GATEWAYS, WG_GATEWAYS)
+
+		// ===== FORK: only Palantir Technologies nodes =====
+		// Full identity keys of your nodes with Entry and/or Exit gateway roles enabled.
+		private val MY_NODES = setOf(
+			"9fpfyKV3twCxP5SkRDwnp16SRFpx1qs1JndUd55RHBk9", // Kauffenheim FR
+			"GPuPdVGPGQg8GSMbGmRXQ354bqzWGHDnbqV31qsfFq9R", // Wissembourg FR
+			"2gBwuZRX5gFtjs5pWt4GGob8Dj28nGcBi3d56paNi3cS", // Lauterbourg FR
+			"6KJwUWXU3TGUhK7nfoMMao987s1sV5PAE8n5PTrca4bz", // Munchhausen FR
+			"HNX5PnH2FvossdfVVdRCMu6igTVwJL6NWbDPDJH1V2Yu", // Riedseltz FR
+			"5wW5iN87xzr8NkCxPMAYG2e8Mpm8xusMRDRv1nAt3G5L", // Beinheim FR
+		)
+
+		// If the filter leaves nothing (nodes offline / not yet in the list),
+		// return the full list so the app doesn't end up empty.
+		private const val FALLBACK_TO_ALL = false
+
+		private fun List<NymGateway>.onlyMine(): List<NymGateway> {
+			val mine = filter { it.identity.toString() in MY_NODES }
+			return if (mine.isEmpty() && FALLBACK_TO_ALL) this else mine
+		}
+		// ===== /FORK =====
 	}
 
 	private val legacyMigration = object : DataMigration<Preferences> {
@@ -75,9 +96,9 @@ class DataStoreGatewayRepository(context: Context, private val legacyDataStoreMa
 		.distinctUntilChanged()
 		.map { (entry, exit, wg) ->
 			Gateways(
-				entryGateways = decodeCached(ENTRY_GATEWAYS, entry),
-				exitGateways = decodeCached(EXIT_GATEWAYS, exit),
-				wgGateways = decodeCached(WG_GATEWAYS, wg),
+				entryGateways = decodeCached(ENTRY_GATEWAYS, entry).onlyMine(),
+				exitGateways = decodeCached(EXIT_GATEWAYS, exit).onlyMine(),
+				wgGateways = decodeCached(WG_GATEWAYS, wg).onlyMine(),
 			)
 		}
 		.flowOn(ioDispatcher)

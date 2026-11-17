@@ -76,7 +76,7 @@ android {
 	}
 
 	defaultConfig {
-		applicationId = Constants.APP_ID
+		applicationId = "ua.odessa.nymodessa" // FORK: own app id (namespace stays net.nymtech.nymvpn)
 		minSdk = Constants.MIN_SDK
 		targetSdk = Constants.TARGET_SDK
 		versionCode = Constants.VERSION_CODE
@@ -117,7 +117,7 @@ android {
 				getDefaultProguardFile("proguard-android-optimize.txt"),
 				"proguard-rules.pro",
 			)
-			resValue("string", "provider", "\"${Constants.APP_NAME}.provider\"")
+			resValue("string", "provider", "\"nymodessa.provider\"")
 			signingConfig = signingConfigs.getByName(Constants.RELEASE)
 		}
 		debug {
@@ -125,32 +125,32 @@ android {
 			isShrinkResources = false
 			isDebuggable = true
 			applicationIdSuffix = ".debug"
-			resValue("string", "app_name", "NymVPN - Debug")
-			resValue("string", "provider", "\"${Constants.APP_NAME}.provider.debug\"")
+			resValue("string", "app_name", "NYM Odessa - Debug")
+			resValue("string", "provider", "\"nymodessa.provider.debug\"")
 		}
 
 		// Debug build with the production app ID and name for Play billing
 		create(Constants.PLAYTEST) {
 			initWith(buildTypes.getByName("debug"))
 			applicationIdSuffix = null
-			resValue("string", "app_name", "NymVPN")
-			resValue("string", "provider", "\"${Constants.APP_NAME}.provider\"")
+			resValue("string", "app_name", "NYM Odessa")
+			resValue("string", "provider", "\"nymodessa.provider\"")
 			matchingFallbacks += listOf("debug")
 		}
 
 		create(Constants.PRERELEASE) {
 			initWith(buildTypes.getByName(Constants.RELEASE))
 			applicationIdSuffix = ".prerelease"
-			resValue("string", "app_name", "NymVPN - Pre")
-			resValue("string", "provider", "\"${Constants.APP_NAME}.provider.pre\"")
+			resValue("string", "app_name", "NYM Odessa - Pre")
+			resValue("string", "provider", "\"nymodessa.provider.pre\"")
 			buildConfigField("Boolean", "IS_PRERELEASE", "true")
 		}
 
 		create(Constants.NIGHTLY) {
 			initWith(buildTypes.getByName(Constants.RELEASE))
 			applicationIdSuffix = ".nightly"
-			resValue("string", "app_name", "NymVPN - Nightly")
-			resValue("string", "provider", "\"${Constants.APP_NAME}.provider.nightly\"")
+			resValue("string", "app_name", "NYM Odessa - Nightly")
+			resValue("string", "provider", "\"nymodessa.provider.nightly\"")
 		}
 	}
 
